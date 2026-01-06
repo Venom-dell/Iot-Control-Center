@@ -12,38 +12,6 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.get(
-  "/api/devices",
-  authenticateToken,
-  async (req: Request, res: Response) => {
-    const devices = await Device.find({});
-    res.json(devices);
-  }
-);
-
-app.post(
-  "/api/devices",
-  authenticateToken,
-  async (req: Request, res: Response) => {
-    const newDevice = new Device(req.body);
-    await newDevice.save();
-    res.json(newDevice);
-  }
-);
-
-app.patch("/api/devices/:id", async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const updatedDevice = await Device.findByIdAndUpdate(id, req.body, {
-      new: true,
-    });
-    res.json(updatedDevice);
-  } catch (err) {
-    console.error("Error updating device:", err);
-    res.status(500).json({ error: "Failed to update device" });
-  }
-});
-
 app.post("/api/register", async (req: Request, res: Response) => {
   try {
     const { email, password, username } = req.body;
@@ -78,16 +46,78 @@ app.post("/api/login", async (req: Request, res: Response) => {
   }
 });
 
-app.delete("/api/devices/:id", async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    await Device.findByIdAndDelete(id);
-    res.json({ message: "Device deleted successfully" });
-  } catch (err) {
-    console.error("Error deleting device:", err);
-    res.status(500).json({ error: "Failed to delete device" });
+app.get(
+  "/api/devices",
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    const devices = await Device.find({ userId: (req as any).user.id });
+    res.json(devices);
   }
-});
+);
+
+app.post(
+  "/api/devices",
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    try {
+      const newDevice = new Device({
+        ...req.body,
+        userId: (req as any).user.id,
+      });
+      await newDevice.save();
+      res.json(newDevice);
+    } catch (err) {
+      console.error("Error creating device:", err);
+      res.status(500).json({ error: "Failed to create device" });
+    }
+  }
+);
+
+app.patch(
+  "/api/devices/:id",
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params as { id: string };
+      const userId = (req as any).user.id;
+      const updatedDevice = await Device.findOneAndUpdate(
+        { _id: id, userId: userId },
+        req.body,
+        { new: true }
+      );
+
+      if (!updatedDevice) {
+        return res.status(404).json({ error: "Device not found" });
+      }
+      res.json(updatedDevice);
+    } catch (err) {
+      console.error("Error updating device:", err);
+      res.status(500).json({ error: "Failed to update device" });
+    }
+  }
+);
+
+app.delete(
+  "/api/devices/:id",
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params as { id: string };
+      const userId = (req as any).user.id;
+      const deletedDevice = await Device.findOneAndDelete({
+        _id: id,
+        userId: userId,
+      });
+      if (!deletedDevice) {
+        return res.status(404).json({ error: "Device not found" });
+      }
+      res.json({ message: "Device deleted successfully" });
+    } catch (err) {
+      console.error("Error deleting device:", err);
+      res.status(500).json({ error: "Failed to delete device" });
+    }
+  }
+);
 
 const PORT = 3000;
 
