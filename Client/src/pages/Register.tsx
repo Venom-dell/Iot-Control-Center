@@ -41,8 +41,8 @@ const Register = () => {
   };
 
   return (
-    <div className="h-screen flex justify-center items-center">
-      <div className="bg-white p-8 rounded shadow-md">
+    <div className="bg-gray-100 h-screen flex justify-center items-center">
+      <div className="bg-white p-8 rounded shadow-lg">
         <h2 className="text-2xl font-bold mb-4">Register</h2>
         <input
           type="email"

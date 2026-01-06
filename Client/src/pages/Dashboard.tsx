@@ -110,12 +110,12 @@ const Dashboard = () => {
   };
 
   if (loading) {
-    return <div className="bg-white rounded-lg shadow-md p-4 ">Loading...</div>;
+    return <div className="bg-white rounded-lg shadow-md p-4 m-4">Loading...</div>;
   }
 
   return (
     <>
-      <div className="h-screen flex flex-col gap-4">
+      <div className="h-screen flex flex-col gap-4 m-4">
         <NavBar />
         <button
           className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"

@@ -8,6 +8,10 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleLogin = async (email: string, password: string) => {
+    if (!email || !password || email.trim() === "" || password.trim() === "") {
+      alert("Please fill in all fields");
+      return;
+    }
     try {
       const response = await fetch(`${API_BASE_URL}/api/login`, {
         method: "POST",
@@ -29,8 +33,8 @@ const Login = () => {
 
   return (
     <>
-      <div className="h-screen flex justify-center items-center">
-        <div className="bg-white p-8 rounded shadow-md">
+      <div className="bg-gray-100 h-screen flex justify-center items-center">
+        <div className="bg-white p-8 rounded shadow-lg">
           <h2 className="text-2xl font-bold mb-4">Login</h2>
           <input
             type="email"
@@ -38,6 +42,9 @@ const Login = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full p-2 mb-4 border rounded"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleLogin(email, password);
+            }}
           />
           <input
             type="password"
@@ -45,6 +52,9 @@ const Login = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="w-full p-2 mb-4 border rounded"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleLogin(email, password);
+            }}
           />
           <button
             className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
