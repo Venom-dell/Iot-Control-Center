@@ -110,7 +110,9 @@ const Dashboard = () => {
   };
 
   if (loading) {
-    return <div className="bg-white rounded-lg shadow-md p-4 m-4">Loading...</div>;
+    return (
+      <div className="bg-white rounded-lg shadow-md p-4 m-4">Loading...</div>
+    );
   }
 
   return (

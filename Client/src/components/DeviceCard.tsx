@@ -11,6 +11,7 @@ const DeviceCard = ({ device, onToggle, onDelete }: DeviceCardProp) => {
     <>
       <div className="bg-white rounded-lg shadow-md p-4">
         <h2 className="text-xl font-bold">{device.name}</h2>
+        <p>Token: {device.token}</p>
         <p className="text-gray-600">Type: {device.type}</p>
         <p
           className={
@@ -19,6 +20,25 @@ const DeviceCard = ({ device, onToggle, onDelete }: DeviceCardProp) => {
         >
           Status: {device.status}
         </p>
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          {device.data &&
+            Object.entries(device.data).map(
+              ([key, value]) =>
+                key !== "status" && (
+                  <div
+                    key={key}
+                    className="bg-gray-100 p-2 rounded border text-centered"
+                  >
+                    <p className="font-semibold">{key}</p>
+                    <p>
+                      {typeof value === "number"
+                        ? value.toFixed(1)
+                        : String(value)}
+                    </p>
+                  </div>
+                )
+            )}
+        </div>
         {device.status === "OFFLINE" ? (
           <p className="text-gray-600">Last Seen: {device.lastSeen}</p>
         ) : null}

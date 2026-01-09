@@ -50,6 +50,9 @@ const Register = () => {
           className="w-full p-2 mb-4 border rounded"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") handleRegister(email, password, username);
+          }}
         />
         <input
           type="text"
@@ -57,6 +60,9 @@ const Register = () => {
           className="w-full p-2 mb-4 border rounded"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") handleRegister(email, password, username);
+          }}
         />
         <input
           type="password"
@@ -64,6 +70,9 @@ const Register = () => {
           className="w-full p-2 mb-4 border rounded"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") handleRegister(email, password, username);
+          }}
         />
         <button
           className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"

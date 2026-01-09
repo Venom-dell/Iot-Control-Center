@@ -7,6 +7,7 @@ import { connectToDB } from "./db.js";
 import jwt from "jsonwebtoken";
 import User from "./models/User.js";
 import { authenticateToken } from "./middleware/auth.js";
+import crypto from "crypto";
 
 const app = express();
 app.use(express.json());
@@ -60,10 +61,13 @@ app.post(
   authenticateToken,
   async (req: Request, res: Response) => {
     try {
+      const token = crypto.randomBytes(32).toString("hex");
       const newDevice = new Device({
         ...req.body,
         userId: (req as any).user.id,
+        token: token,
       });
+
       await newDevice.save();
       res.json(newDevice);
     } catch (err) {
@@ -72,6 +76,24 @@ app.post(
     }
   }
 );
+
+app.post("/api/webhook/:token", async (req: Request, res: Response) => {
+  try {
+    const { token } = req.params as { token: string };
+    const data = req.body;
+
+    const device = await Device.findOne({ token: token });
+    if (!device) return res.status(404).json({ message: "Invalid token" });
+    if (data.status) device.status = data.status;
+
+    device.data = { ...device.data, ...data };
+    device.markModified("data");
+    await device.save();
+  } catch (err) {
+    console.error("Error handling webhook:", err);
+    res.status(500).json({ error: "Failed to handle webhook" });
+  }
+});
 
 app.patch(
   "/api/devices/:id",
