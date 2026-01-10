@@ -32,16 +32,18 @@ const Login = () => {
   };
 
   return (
-    <>
-      <div className="bg-gray-100 h-screen flex justify-center items-center">
-        <div className="bg-white p-8 rounded shadow-lg">
-          <h2 className="text-2xl font-bold mb-4">Login</h2>
+    <div className="min-h-screen bg-gray-900 flex justify-center items-center">
+      <div className="bg-white/10 backdrop-blur-lg p-8 rounded-xl shadow-lg w-full max-w-md">
+        <h2 className="text-3xl font-bold mb-6 text-center text-white">
+          Login
+        </h2>
+        <div className="space-y-4">
           <input
             type="email"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-2 mb-4 border rounded"
+            className="w-full p-3 bg-gray-700/50 rounded-lg border border-transparent focus:border-blue-500 focus:bg-gray-800/60 focus:outline-none transition text-white"
             onKeyDown={(e) => {
               if (e.key === "Enter") handleLogin(email, password);
             }}
@@ -51,26 +53,26 @@ const Login = () => {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-2 mb-4 border rounded"
+            className="w-full p-3 bg-gray-700/50 rounded-lg border border-transparent focus:border-blue-500 focus:bg-gray-800/60 focus:outline-none transition text-white"
             onKeyDown={(e) => {
               if (e.key === "Enter") handleLogin(email, password);
             }}
           />
-          <button
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-            onClick={() => handleLogin(email, password)}
-          >
-            Login
-          </button>
-          <Link
-            to="/register"
-            className="block mt-4 text-blue-500 hover:underline"
-          >
-            Don't have an account? Register
-          </Link>
         </div>
+        <button
+          className="w-full bg-blue-600 text-white py-3 px-4 mt-6 rounded-lg hover:bg-blue-700 transition"
+          onClick={() => handleLogin(email, password)}
+        >
+          Login
+        </button>
+        <p className="mt-6 text-center text-gray-400">
+          Don't have an account?{" "}
+          <Link to="/register" className="text-blue-400 hover:underline">
+            Register
+          </Link>
+        </p>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -18,7 +18,6 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDevices = async () => {
       const token = localStorage.getItem("token")?.replace(/['"]+/g, "");
-      console.log(token);
       if (!token) {
         navigate("/");
         return;
@@ -44,7 +43,7 @@ const Dashboard = () => {
 
     const interval = setInterval(fetchDevices, 2000);
     return () => clearInterval(interval);
-  }, []);
+  }, [navigate]);
 
   const toggleDevice = async (id: string, currentStatus: string) => {
     const newStatus = currentStatus === "ONLINE" ? "OFFLINE" : "ONLINE";
@@ -85,6 +84,8 @@ const Dashboard = () => {
         body: JSON.stringify({ name, type }),
       });
       setIsModalOpen(false);
+      setDeviceName("");
+      setDeviceType("");
     } catch (err) {
       console.error("Error adding device:", err);
       alert("Failed to add device");
@@ -111,63 +112,77 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-4 m-4">Loading...</div>
+      <div className="min-h-screen bg-gray-900 flex justify-center items-center">
+        <div className="text-white text-xl">Loading...</div>
+      </div>
     );
   }
 
   return (
-    <>
-      <div className="h-screen flex flex-col gap-4 m-4">
-        <NavBar />
-        <button
-          className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
-          onClick={() => setIsModalOpen(true)}
-        >
-          Add Device
-        </button>
+    <div className="min-h-screen bg-gray-900 text-white">
+      <NavBar />
+      <div className="p-8">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold">Dashboard</h1>
+          <button
+            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition"
+            onClick={() => setIsModalOpen(true)}
+          >
+            Add Device
+          </button>
+        </div>
         <Modal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           title="Add New Device"
         >
-          <input
-            type="text"
-            placeholder="Device Name"
-            value={deviceName}
-            onChange={(e) => setDeviceName(e.target.value)}
-            className="border rounded p-2 w-full mb-2"
-          />
-          <select
-            value={deviceType}
-            onChange={(e) => setDeviceType(e.target.value)}
-            className="border rounded p-2 w-full mb-2"
-          >
-            <option value="">Select Device Type</option>
-            <option value="SENSOR">Sensor</option>
-            <option value="ACTUATOR">Actuator</option>
-          </select>
-          <button
-            type="submit"
-            className="bg-blue-500 text-white py-2 px-4 rounded"
-            onClick={() => addDevice(deviceName, deviceType)}
-          >
-            Add Device
-          </button>
+          <div className="space-y-4">
+            <input
+              type="text"
+              placeholder="Device Name"
+              value={deviceName}
+              onChange={(e) => setDeviceName(e.target.value)}
+              className="w-full p-3 bg-gray-700/50 rounded-lg border border-transparent focus:border-blue-500 focus:bg-gray-800/60 focus:outline-none transition text-white"
+            />
+            <select
+              value={deviceType}
+              onChange={(e) => setDeviceType(e.target.value)}
+              className="w-full p-3 bg-gray-700/50 rounded-lg border border-transparent focus:border-blue-500 focus:bg-gray-800/60 focus:outline-none transition text-white"
+            >
+              <option value="">Select Device Type</option>
+              <option value="SENSOR">Sensor</option>
+              <option value="ACTUATOR">Actuator</option>
+            </select>
+          </div>
+          <div className="mt-6 flex justify-end gap-4">
+            <button
+              type="button"
+              className="py-2 px-4 bg-gray-600 rounded-lg hover:bg-gray-700 transition"
+              onClick={() => setIsModalOpen(false)}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="py-2 px-4 bg-blue-600 rounded-lg hover:bg-blue-700 transition"
+              onClick={() => addDevice(deviceName, deviceType)}
+            >
+              Add Device
+            </button>
+          </div>
         </Modal>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {devices.map((device) => {
-            return (
-              <DeviceCard
-                device={device}
-                key={device._id}
-                onToggle={toggleDevice}
-                onDelete={deleteDevice}
-              />
-            );
-          })}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {devices.map((device) => (
+            <DeviceCard
+              device={device}
+              key={device._id}
+              onToggle={toggleDevice}
+              onDelete={deleteDevice}
+            />
+          ))}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

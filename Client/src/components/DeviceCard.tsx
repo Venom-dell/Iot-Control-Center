@@ -7,61 +7,77 @@ interface DeviceCardProp {
 }
 
 const DeviceCard = ({ device, onToggle, onDelete }: DeviceCardProp) => {
+  const cardBg =
+    device.status === "ONLINE" ? "bg-green-800/20" : "bg-gray-800/20";
+
   return (
-    <>
-      <div className="bg-white rounded-lg shadow-md p-4">
-        <h2 className="text-xl font-bold">{device.name}</h2>
-        <p>Token: {device.token}</p>
-        <p className="text-gray-600">Type: {device.type}</p>
-        <p
-          className={
-            device.status === "ONLINE" ? "text-green-500" : "text-red-500"
-          }
+    <div
+      className={`backdrop-blur-lg p-6 rounded-xl shadow-lg transition-all duration-300 hover:shadow-2xl ${cardBg} border border-white/10`}
+    >
+      <div className="flex justify-between items-start">
+        <h2 className="text-2xl font-bold text-white">{device.name}</h2>
+        <span
+          className={`px-3 py-1 text-sm font-semibold rounded-full ${
+            device.status === "ONLINE"
+              ? "bg-green-500/80 text-white"
+              : "bg-red-500/80 text-white"
+          }`}
         >
-          Status: {device.status}
-        </p>
-        <div className="mt-4 grid grid-cols-2 gap-2">
-          {device.data &&
-            Object.entries(device.data).map(
-              ([key, value]) =>
-                key !== "status" && (
-                  <div
-                    key={key}
-                    className="bg-gray-100 p-2 rounded border text-centered"
-                  >
-                    <p className="font-semibold">{key}</p>
-                    <p>
-                      {typeof value === "number"
-                        ? value.toFixed(1)
-                        : String(value)}
-                    </p>
-                  </div>
-                )
-            )}
-        </div>
-        {device.status === "OFFLINE" ? (
-          <p className="text-gray-600">Last Seen: {device.lastSeen}</p>
-        ) : null}
-        <div>
-          <button
-            className={
-              device.status === "ONLINE"
-                ? "border border-red-500 text-red-500 hover:bg-red-100 rounded px-4 py-2 mt-2"
-                : "border border-green-500 text-green-500 hover:bg-green-100 rounded px-4 py-2 mt-2"
-            }
-            onClick={() => onToggle(device._id, device.status)}
-          >
-            {device.status === "ONLINE" ? "Turn OFF" : "Turn ON"}
-          </button>
-          <button
-            className="border border-red-500 text-red-500 hover:bg-red-100 rounded px-4 py-2 mt-2 ml-2"
-            onClick={() => onDelete(device._id)}
-          >
-            Delete
-          </button>
-        </div>
+          {device.status}
+        </span>
       </div>
-    </>
+      <p className="text-sm text-gray-400 mt-2">Type: {device.type}</p>
+      <p className="text-xs text-gray-500 mt-1 break-all overflow-hidden">
+        Token: {device.token}
+      </p>
+
+      <div className="mt-4 grid grid-cols-2 gap-4">
+        {device.data &&
+          Object.entries(device.data).map(
+            ([key, value]) =>
+              key !== "status" && (
+                <div
+                  key={key}
+                  className="bg-black/20 p-3 rounded-lg text-center"
+                >
+                  <p className="font-semibold text-gray-300 capitalize">
+                    {key}
+                  </p>
+                  <p className="text-lg font-bold text-white">
+                    {typeof value === "number"
+                      ? value.toFixed(1)
+                      : String(value)}
+                  </p>
+                </div>
+              )
+          )}
+      </div>
+
+      {device.status === "OFFLINE" && (
+        <p className="text-sm text-gray-500 mt-4">
+          Last Seen: {device.lastSeen}
+        </p>
+      )}
+
+      <div className="mt-6 flex gap-4">
+        <button
+          className={`w-full py-2 px-4 rounded-lg transition font-semibold ${
+            device.status === "ONLINE"
+              ? "bg-red-600 hover:bg-red-700 text-white"
+              : "bg-green-600 hover:bg-green-700 text-white"
+          }`}
+          onClick={() => onToggle(device._id, device.status)}
+        >
+          {device.status === "ONLINE" ? "Turn OFF" : "Turn ON"}
+        </button>
+        <button
+          className="w-full py-2 px-4 rounded-lg transition font-semibold bg-gray-600 hover:bg-gray-700 text-white"
+          onClick={() => onDelete(device._id)}
+        >
+          Delete
+        </button>
+      </div>
+    </div>
   );
 };
 
